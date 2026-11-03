@@ -1,6 +1,6 @@
 # App Functional Doc Builder
 
-A GitLab Duo AI Catalog agent that builds the **Functional Document** for one application by combining its code spec (from the App Functionality Extractor) with its Confluence pages, including diagrams and images. Every item is cited and has a confidence level; code-vs-document conflicts are logged, not hidden.
+A GitLab Duo **Agent Skill** (`/app-functional-doc-builder`, in [`.agents/skills/`](../../.agents/skills/app-functional-doc-builder/SKILL.md)) that builds the **Functional Document** for one application by combining its code spec (from the App Functionality Extractor) with its Confluence pages, including diagrams and images. Every item is cited and has a confidence level; code-vs-document conflicts are logged, not hidden.
 
 **Sections:** Overview · Business Functions · Business Rules · Data Model · Integrations · Process Flows (steps + Mermaid) · Runbook · Risks & Actions · Open Questions · Conflicts · Source Register
 
@@ -10,7 +10,8 @@ A GitLab Duo AI Catalog agent that builds the **Functional Document** for one ap
 
 | File | What it is |
 |---|---|
-| [`agent.md`](agent.md) | AI Catalog fields, system prompt, evals, limits |
+| [`SKILL.md`](../../.agents/skills/app-functional-doc-builder/SKILL.md) | The instructions Duo runs (source of truth) |
+| [`agent.md`](agent.md) | Design notes, evals, limits |
 | [`prompt.md`](prompt.md) | Duo Chat prompts: with/without Confluence, image notes, large apps, follow-ups |
 | [`../../tools/office-export/`](../../tools/office-export/) | JSON → .xlsx / .docx converter and validator |
 | [`../migration-requirements-extractor/`](../migration-requirements-extractor/) | Next step: migration requirements in Excel |

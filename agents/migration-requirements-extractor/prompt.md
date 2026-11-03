@@ -1,6 +1,6 @@
 # Prompts: Migration Requirements Extractor
 
-Select the **migration-requirements-extractor** agent in Duo Chat.
+In Duo Chat in your IDE, start a **new** conversation and type `/migration-requirements-extractor`, then one of these prompts. The skill writes `docs/requirements.md` / `.json` and runs the Excel export itself.
 
 **Before you start:** an SME has reviewed the app's `functional-doc.json`, and its open questions and conflicts are answered (or explicitly accepted).
 

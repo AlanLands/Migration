@@ -1,6 +1,6 @@
 # Prompts: App Functional Doc Builder
 
-Select the **app-functional-doc-builder** agent in Duo Chat, then use one of these prompts. Replace the `<...>` parts.
+In Duo Chat in your IDE, start a **new** conversation and type `/app-functional-doc-builder`, then one of these prompts. The skill writes `docs/functional-doc.md` and `docs/functional-doc.json` and runs the Excel/Word export itself. The sections below are for when you need more control. Replace the `<...>` parts.
 
 **Before you start:** run the **App Functionality Extractor** on the app repo and save its output as `docs/functional-spec.md` in your local clone (IDE route) or keep it ready to paste.
 
