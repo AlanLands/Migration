@@ -1,0 +1,18 @@
+{
+  "doc_type": "migration_requirements",
+  "schema_version": "1.0",
+  "meta": {"app_name": "Sample Claims App", "app_id": "APP-000", "date": "2026-11-03", "status": "AI DRAFT", "functional_doc_date": "2026-11-03", "target_context": "Cloud not decided; replatform to containers assumed"},
+  "requirements": [
+    {"id": "REQ-001", "category": "Functional", "title": "Claim registration parity", "description": "The migrated application shall accept claim submissions with the same inputs and responses as today.", "acceptance_criteria": "Given an active policy, when a broker submits a claim, then it is stored with status REGISTERED. Given an inactive policy on the loss date, then the claim is rejected (BR-001). Given an amount > 50,000, then it is routed to manual assessment (BR-002).", "priority": "Must", "traces_to": "BF-001, BR-001, BR-002", "source": "S1; S2", "confidence": "High", "owner": "", "status": "Draft"},
+    {"id": "REQ-002", "category": "Data", "title": "Migrate CLAIM data", "description": "The migration shall move all CLAIM rows with reconciled counts and amounts.", "acceptance_criteria": "Row count and SUM(AMOUNT) match source and target per STATUS; PII columns encrypted at rest.", "priority": "Must", "traces_to": "DM-001", "source": "S1", "confidence": "High", "owner": "", "status": "Draft"},
+    {"id": "REQ-003", "category": "Integration", "title": "FinanceSys export continues", "description": "The migrated application shall deliver the assessed-claims file to FinanceSys from the cloud.", "acceptance_criteria": "File delivered on schedule (TBD, see CF-001) and accepted by FinanceSys from the new egress IPs.", "priority": "Must", "traces_to": "INT-001, BF-002, RA-002", "source": "S1; S2", "confidence": "Medium", "owner": "", "status": "Draft"},
+    {"id": "REQ-004", "category": "Non-functional", "title": "Availability target", "description": "The migrated application shall meet the agreed availability target.", "acceptance_criteria": "Availability target: TBD (OQ-001).", "priority": "Must", "traces_to": "BASELINE", "source": "", "confidence": "Low", "owner": "", "status": "Draft"}
+  ],
+  "assumptions": [
+    {"id": "AS-001", "assumption": "Every production app needs a defined availability target (BASELINE)", "impact_if_wrong": "Low", "related_ids": "REQ-004"}
+  ],
+  "open_questions": [
+    {"id": "OQ-001", "question": "What availability / RPO / RTO does the business need?", "why_it_matters": "Drives target architecture and DR", "ask": "Business owner", "related_ids": "REQ-004"}
+  ],
+  "coverage_gaps": []
+}

@@ -1,0 +1,46 @@
+{
+  "doc_type": "functional_doc",
+  "schema_version": "1.0",
+  "meta": {"app_name": "Sample Claims App", "app_id": "APP-000", "date": "2026-11-03", "status": "AI DRAFT", "repo": "group/sample-claims", "commit": "abc1234", "coverage": "Code spec fully read; 2 of 2 Confluence pages read; 1 diagram not readable."},
+  "sources": [
+    {"id": "S1", "type": "code", "title": "docs/functional-spec.md", "ref": "group/sample-claims@abc1234", "last_updated": "2026-10-30", "readable": "Y"},
+    {"id": "S2", "type": "confluence", "title": "Sample Claims - Solution Overview", "ref": "<confluence-url>", "last_updated": "2024-05-12", "readable": "Y"},
+    {"id": "S3", "type": "image", "title": "claims-architecture.png (on S2)", "ref": "<confluence-url>#attachment", "last_updated": "2024-05-12", "readable": "N"}
+  ],
+  "overview": {"purpose": "Registers and assesses insurance claims submitted by brokers.", "business_owner": "Unknown", "users": "Brokers, claims handlers", "criticality": "Unknown", "current_hosting": "On-prem Windows Server VMs (S2 > Hosting)", "tech_stack": "Java 8, Spring Boot 1.5, Oracle 12c", "scope": "Claim registration and assessment; payments out of scope", "source": "S1 > Summary; S2 > Overview"},
+  "business_functions": [
+    {"id": "BF-001", "name": "Register claim", "description": "Broker submits a new claim with policy number and loss details.", "trigger": "API", "actors": "Broker", "related_rules": "BR-001, BR-002", "source": "S1 > ClaimController.java:L20-75; S2 > Functions", "confidence": "High"},
+    {"id": "BF-002", "name": "Nightly claim export", "description": "Exports assessed claims to Finance.", "trigger": "batch", "actors": "Scheduler", "related_rules": "", "source": "S1 > ExportJob.java:L10-60", "confidence": "High"}
+  ],
+  "business_rules": [
+    {"id": "BR-001", "rule": "A claim is rejected if the policy is not active on the loss date.", "function_id": "BF-001", "type": "eligibility", "enforced_in": "ClaimService.validatePolicy", "source": "S1 > ClaimService.java:L88-104", "confidence": "High"},
+    {"id": "BR-002", "rule": "Claims above 50,000 need manual assessment.", "function_id": "BF-001", "type": "validation", "enforced_in": "AssessmentRules.java", "source": "S1 > AssessmentRules.java:L12; S2 > Rules", "confidence": "High"}
+  ],
+  "data_model": [
+    {"id": "DM-001", "entity": "CLAIM", "description": "One row per claim", "key_attributes": "CLAIM_ID, POLICY_NO, LOSS_DATE, AMOUNT, STATUS", "relationships": "CLAIM.POLICY_NO -> POLICY", "datastore": "Oracle 12c", "read_by": "BF-001, BF-002", "written_by": "BF-001", "volume": "Unknown", "pii": "Y", "source": "S1 > Data model", "confidence": "High"}
+  ],
+  "integrations": [
+    {"id": "INT-001", "system": "FinanceSys", "direction": "outbound", "protocol": "SFTP file", "frequency": "Nightly", "data": "Assessed claims CSV", "purpose": "Payment processing", "config_location": "application-prod.yml: export.sftp.*", "source": "S1 > ExportJob.java; S2 > Interfaces", "confidence": "High"}
+  ],
+  "process_flows": [
+    {"id": "PF-001", "name": "Claim to payment", "description": "From broker submission to finance file.", "steps": [
+      {"step": "1", "actor": "Broker", "action": "Submits claim", "system": "Sample Claims API", "refs": "BF-001"},
+      {"step": "2", "actor": "System", "action": "Validates policy and amount", "system": "Sample Claims", "refs": "BR-001, BR-002"},
+      {"step": "3", "actor": "Scheduler", "action": "Exports assessed claims nightly", "system": "Sample Claims", "refs": "BF-002, INT-001"}
+    ], "mermaid": "flowchart LR\n  A[Broker submits claim] --> B{Policy active?}\n  B -- no --> R[Reject]\n  B -- yes --> C[Assess]\n  C --> D[Nightly export to FinanceSys]", "source": "S1; S2 > Process", "confidence": "Medium"}
+  ],
+  "runbook": [
+    {"id": "RB-001", "task": "Rerun nightly export", "when": "Export job failed", "steps": "Run export.bat with --date=<yyyy-mm-dd> on the batch server", "owner": "Unknown", "source": "S2 > Support", "confidence": "Medium"}
+  ],
+  "risks": [
+    {"id": "RA-001", "risk": "Spring Boot 1.5 / Java 8 are end-of-life", "impact": "H", "likelihood": "H", "action": "Plan upgrade before or during replatform", "owner": "Unknown", "source": "S1 > Tech profile"},
+    {"id": "RA-002", "risk": "SFTP target hostname hardcoded per environment", "impact": "M", "likelihood": "H", "action": "Externalise to config; confirm FinanceSys can accept from cloud IPs", "owner": "Unknown", "source": "S1 > application-prod.yml"}
+  ],
+  "open_questions": [
+    {"id": "OQ-001", "question": "What does the architecture diagram S3 show?", "why_it_matters": "May show integrations not found in code", "ask": "App owner", "related_ids": "S3"},
+    {"id": "OQ-002", "question": "Who is the business owner?", "why_it_matters": "Needed for sign-off", "ask": "Portfolio manager", "related_ids": ""}
+  ],
+  "conflicts": [
+    {"id": "CF-001", "topic": "Export schedule", "value_a": "Nightly 02:00", "source_a": "S1 > cron in ExportJob", "value_b": "Twice daily", "source_b": "S2 > Interfaces (2024)", "recommendation": "Code is current behaviour; confirm with Finance whether twice-daily is still required"}
+  ]
+}
